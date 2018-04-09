@@ -15,7 +15,13 @@ fall = 78e-12;
 off = 500e-12;
 pulseShape = 'Trapezodial';
 alpha = 5;
-high = csvread(high_voltage_file);
+
+% read random numbers from a file
+% high = csvread(high_voltage_file);
+
+% generate pseudo random numbers
+high = 2*rand(1, 5000)-1
+
 low = 0;
 correction = 0;
 arbConfig = [];
@@ -28,18 +34,20 @@ waveform = iqpulsegen('pw', floor(pw*sampleRate), 'rise', floor(rise*sampleRate)
 
 % shift the pattern circularly to create delay
 shifted_waveform = circshift(waveform, delay*sampleRate);
-plot(waveform);
-figure();
-plot(shifted_waveform);
+
+% MATLAB simulation of waveforms
+%plot(waveform);
+%figure();
+%plot(shifted_waveform);
 
 % download waveform into the channels of the AWG
-% iqdownload(waveform, 'channelMapping', target_channels);
+% iqdownload(shifted_waveform, 'channelMapping', target_channels);
 % suppress output
 % arbConfig = loadArbConfig(arbConfig);
 % f = iqopen(arbConfig);
 % xfprintf(f, ':outp off');
 
-
+% Wrapper for communicating with the AWG using SPCI commands
 function xfprintf(f, s, ignoreError)
 % Send the string s to the instrument object f
 % and check the error status
