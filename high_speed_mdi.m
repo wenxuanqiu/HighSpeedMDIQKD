@@ -1,5 +1,5 @@
 % 'sampleRate' - sampleRate in Hz
-sampleRate = 16e9;
+sampleRate = 65e9;
 
 % files that contain arrays of high and low voltages
 high_voltage_file = "peak_voltage.dat"
@@ -9,27 +9,28 @@ low_voltage_file = "low_voltage.dat"
 delay = 20e-7;
 
 % 'pw' - pulse width in ns
-pw = 5e-7;
-rise = 5e-9;
-fall = 5e-9;
-off = 5e-7;
+pw = 100e-12;
+rise = 78e-12;
+fall = 78e-12;
+off = 500e-12;
 pulseShape = 'Trapezodial';
 alpha = 5;
-high = csvread(high_voltage_file)
+high = csvread(high_voltage_file);
 low = 0;
 correction = 0;
 arbConfig = [];
 target_channels = [1 0; 0 0; 0 0; 1 0];
 
-waveform = iqpulsegen('pw', pw*sampleRate, 'rise', rise*sampleRate, 'fall', fall*sampleRate, 'off', off*sampleRate, ...
-'pulseShape', pulseShape, 'alpha', alpha, 'low', low, 'high', high, ...
+waveform = iqpulsegen('pw', floor(pw*sampleRate), 'rise', floor(rise*sampleRate), ...
+'fall', floor(fall*sampleRate), 'off', floor(off*sampleRate), 'pulseShape', pulseShape, ...
+'alpha', alpha, 'low', low, 'high', high, ...
 'correction', correction, 'arbConfig', arbConfig);
 
 % shift the pattern circularly to create delay
-% shifted_waveform = circshift(waveform, delay*sampleRate);
-% plot(waveform);
-% figure();
-% plot(shifted_waveform);
+shifted_waveform = circshift(waveform, delay*sampleRate);
+plot(waveform);
+figure();
+plot(shifted_waveform);
 
 % download waveform into the channels of the AWG
 % iqdownload(waveform, 'channelMapping', target_channels);
